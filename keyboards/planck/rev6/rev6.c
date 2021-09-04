@@ -15,6 +15,7 @@
  */
 #include "rev6.h"
 
+#ifdef RGB_MATRIX_ENABLE
 led_config_t g_led_config = { {
   // Key Matrix to LED Index
   { NO_LED, 6,      NO_LED, NO_LED, 5,      NO_LED },
@@ -34,20 +35,9 @@ led_config_t g_led_config = { {
   LED_FLAG_ALL, LED_FLAG_ALL, LED_FLAG_ALL, LED_FLAG_ALL
 } };
 
-void matrix_init_kb(void) {
-	matrix_init_user();
-}
+// LED physical location index
+//     6 5 4 3
+//        0
+//     7 8 1 2
 
-void matrix_scan_kb(void) {
-	matrix_scan_user();
-}
-
-#ifdef DIP_SWITCH_ENABLE
-__attribute__((weak))
-void dip_update(uint8_t index, bool active) {}
-
-__attribute__((weak))
-void dip_switch_update_user(uint8_t index, bool active) {
-    dip_update(index, active);
-}
 #endif
