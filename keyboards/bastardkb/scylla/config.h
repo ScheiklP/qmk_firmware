@@ -18,9 +18,9 @@
 
 #pragma once
 
-/* RGB settings. */
-#define RGBLED_NUM 58
-#define RGBLED_SPLIT { 29, 29 }
+// RGB settings. -> defined in info.json
+// #define RGBLED_NUM 58
+// #define RGBLED_SPLIT { 29, 29 }
 
 /* https://docs.qmk.fm/#/feature_rgb_matrix?id=rgb-matrix-effects */
 #define RGBLIGHT_EFFECT_BREATHING
