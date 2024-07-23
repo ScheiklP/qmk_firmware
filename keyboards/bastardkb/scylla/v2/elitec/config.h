@@ -19,3 +19,6 @@
 
 /* Handedness. */
 #define MASTER_RIGHT
+
+#define OS_DETECTION_DEBOUNCE 200
+#define OS_DETECTION_KEYBOARD_RESET

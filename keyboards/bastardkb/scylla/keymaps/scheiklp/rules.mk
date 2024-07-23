@@ -8,3 +8,5 @@ AUTO_SHIFT_ENABLE = yes
 
 AUDIO_SUPPORTED = no        # Audio is not supported
 AUDIO_ENABLE = no           # Audio output
+
+OS_DETECTION_ENABLE = yes

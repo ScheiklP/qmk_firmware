@@ -1,11 +1,13 @@
-// Copyright 2021 Paul Maria Scheikl (@ScheiklP)
+// Copyright 2024 Paul Maria Scheikl (@ScheiklP)
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 
 #include QMK_KEYBOARD_H
 #include "keymap_german.h"
+#include "mac_keys.h"
 
 #define DE_DOTS RALT(KC_DOT) // …
+#define DE_MAC_DOTS RALT(KC_DOT) // …
 #define DE_UNDO LCTL(DE_Z) // CTRL+Z
 
 
@@ -42,7 +44,9 @@ void copy_paste_cut_reset(tap_dance_state_t *state, void *user_data);
 
 enum custom_layers {
     _1,
+    _1MAC,
     _3,
+    _3MAC,
     _4,
 };
 
@@ -58,11 +62,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           KC_LCTL,  KC_LGUI,                  KC_BSPC, KC_ENTER
   ),
 
+  [_1MAC] = LAYOUT_split_4x6_5(
+     KC_ESC  , DE_MAC_1 , DE_MAC_2    , DE_MAC_3      , DE_MAC_4      , DE_MAC_5      ,                     DE_MAC_6 , DE_MAC_7 , DE_MAC_8    , DE_MAC_9 , DE_MAC_0 , KC_BSPC ,
+     KC_TAB  , DE_MAC_K , DE_MAC_DOT  , DE_MAC_O      , DE_MAC_COMM   , DE_MAC_Y      ,                     DE_MAC_V , DE_MAC_G , DE_MAC_C    , DE_MAC_L , DE_MAC_SS, DE_MAC_Z     ,
+     MO(_3)  , DE_MAC_H , DE_MAC_A    , DE_MAC_E      , DE_MAC_I      , DE_MAC_U      ,                     DE_MAC_D , DE_MAC_T , DE_MAC_R    , DE_MAC_N , DE_MAC_S , DE_MAC_F    ,
+     KC_LSFT , DE_MAC_X , DE_MAC_Q    , TD(TD_AE) , TD(TD_UE) , TD(TD_OE) ,                     DE_MAC_B , DE_MAC_P , DE_MAC_W    , DE_MAC_M , DE_MAC_J , KC_RSFT ,
+
+                                KC_LALT,  KC_SPC,   TD(TD_COPY_PASTE_CUT),    KC_ESC,  MO(_3MAC),  MO(_4),
+                                          KC_LCTL,  KC_LGUI,                  KC_BSPC, KC_ENTER
+  ),
+
   [_3] = LAYOUT_split_4x6_5(
      KC_ESC  , KC_F1   ,  KC_F2    , KC_F3   , KC_F4   , KC_F5   ,       KC_F6   , KC_F7   , KC_F8   , KC_F9   , KC_F10  , KC_BSPC,
      KC_TAB  , DE_DOTS ,  DE_UNDS  , DE_LBRC , DE_RBRC , DE_DEG  ,       DE_EXLM , DE_LABK , DE_RABK , DE_EQL  , DE_AMPR , DE_ACUT,
      KC_TRNS , DE_BSLS ,  DE_SLSH  , DE_LCBR , DE_RCBR , DE_ASTR ,       DE_QUES , DE_LPRN , DE_RPRN , DE_MINS , DE_COLN , DE_AT  ,
      KC_LSFT , DE_HASH ,  DE_DLR   , DE_PIPE , DE_TILD , DE_GRV  ,       DE_PLUS , DE_PERC , DE_DQUO , DE_QUOT , DE_SCLN , KC_RSFT,
+
+                                KC_LALT,  KC_SPC,   TD(TD_COPY_PASTE_CUT),    KC_ESC,  KC_TRNS,  KC_TRNS,
+                                          KC_LCTL,  KC_LGUI,                  KC_BSPC, KC_ENTER
+  ),
+
+  [_3MAC] = LAYOUT_split_4x6_5(
+     KC_ESC  , KC_F1   ,  KC_F2    , KC_F3   , KC_F4   , KC_F5   ,       KC_F6   , KC_F7   , KC_F8   , KC_F9   , KC_F10  , KC_BSPC,
+     KC_TAB  , DE_MAC_DOTS ,  DE_MAC_UNDS  , DE_MAC_LBRC , DE_MAC_RBRC , DE_MAC_DEG  ,       DE_MAC_EXLM , DE_MAC_LABK , DE_MAC_RABK , DE_MAC_EQL  , DE_MAC_AMPR , DE_MAC_ACUT,
+     KC_TRNS , DE_MAC_BSLS ,  DE_MAC_SLSH  , DE_MAC_LCBR , DE_MAC_RCBR , DE_MAC_ASTR ,       DE_MAC_QUES , DE_MAC_LPRN , DE_MAC_RPRN , DE_MAC_MINS , DE_MAC_COLN , DE_MAC_AT  ,
+     KC_LSFT , DE_MAC_HASH ,  DE_MAC_DLR   , DE_MAC_PIPE , DE_MAC_TILD , DE_MAC_GRV  ,       DE_MAC_PLUS , DE_MAC_PERC , DE_MAC_DQUO , DE_MAC_QUOT , DE_MAC_SCLN , KC_RSFT,
 
                                 KC_LALT,  KC_SPC,   TD(TD_COPY_PASTE_CUT),    KC_ESC,  KC_TRNS,  KC_TRNS,
                                           KC_LCTL,  KC_LGUI,                  KC_BSPC, KC_ENTER
@@ -238,3 +262,26 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_OE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, shift_umlaut_o_finished, shift_umlaut_o_reset),
     [TD_AE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, shift_umlaut_a_finished, shift_umlaut_a_reset),
 };
+
+
+bool process_detected_host_os_user(os_variant_t detected_os) {
+    switch (detected_os) {
+        case OS_MACOS:
+            set_single_persistent_default_layer(_1MAC);
+            break;
+        case OS_IOS:
+            set_single_persistent_default_layer(_1MAC);
+            break;
+        case OS_WINDOWS:
+            set_single_persistent_default_layer(_1);
+            break;
+        case OS_LINUX:
+            set_single_persistent_default_layer(_1);
+            break;
+        case OS_UNSURE:
+            set_single_persistent_default_layer(_1);
+            break;
+    }
+
+    return true;
+}
