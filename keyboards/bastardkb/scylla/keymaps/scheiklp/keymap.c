@@ -74,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TRNS , KC_HOME , KC_LEFT , KC_DOWN , KC_RIGHT , KC_END,           KC_KP_ASTERISK , KC_4  , KC_5  , KC_6  , KC_KP_PLUS  , KC_TRNS,
      KC_LSFT , KC_ESC  , KC_TAB  , KC_INS  , KC_ENTER , DE_UNDO,          KC_0           , KC_1  , KC_2  , KC_3  , KC_KP_DOT   , KC_RSFT,
 
-                                KC_LALT,  KC_SPC,   TD(TD_COPY_PASTE_CUT),    KC_ESC,  KC_TRNS,  KC_TRNS,
+                                KC_LALT,  KC_0,   TD(TD_COPY_PASTE_CUT),    KC_ESC,  KC_TRNS,  KC_TRNS,
                                           KC_LCTL,  KC_LGUI,                  KC_BSPC, KC_ENTER
   ),
 };
