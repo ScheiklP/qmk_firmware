@@ -31,6 +31,7 @@ typedef struct {
 // Tap dance enums
 enum {
     TD_COPY_PASTE_CUT,
+    TD_COPY_PASTE_CUT_MAC,
     TD_UE,
     TD_OE,
     TD_AE,
@@ -41,6 +42,8 @@ td_state_t cur_dance(tap_dance_state_t *state);
 // For the x tap dance. Put it here so it can be used in any keymap
 void copy_paste_cut_finished(tap_dance_state_t *state, void *user_data);
 void copy_paste_cut_reset(tap_dance_state_t *state, void *user_data);
+void copy_paste_cut_finished_mac(tap_dance_state_t *state, void *user_data);
+void copy_paste_cut_reset_mac(tap_dance_state_t *state, void *user_data);
 
 enum custom_layers {
     _1,
@@ -63,12 +66,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_1MAC] = LAYOUT_split_4x6_5(
-     KC_ESC  , DE_MAC_1 , DE_MAC_2    , DE_MAC_3      , DE_MAC_4      , DE_MAC_5      ,                     DE_MAC_6 , DE_MAC_7 , DE_MAC_8    , DE_MAC_9 , DE_MAC_0 , KC_BSPC ,
-     KC_TAB  , DE_MAC_K , DE_MAC_DOT  , DE_MAC_O      , DE_MAC_COMM   , DE_MAC_Y      ,                     DE_MAC_V , DE_MAC_G , DE_MAC_C    , DE_MAC_L , DE_MAC_SS, DE_MAC_Z     ,
-     MO(_3)  , DE_MAC_H , DE_MAC_A    , DE_MAC_E      , DE_MAC_I      , DE_MAC_U      ,                     DE_MAC_D , DE_MAC_T , DE_MAC_R    , DE_MAC_N , DE_MAC_S , DE_MAC_F    ,
-     KC_LSFT , DE_MAC_X , DE_MAC_Q    , TD(TD_AE) , TD(TD_UE) , TD(TD_OE) ,                     DE_MAC_B , DE_MAC_P , DE_MAC_W    , DE_MAC_M , DE_MAC_J , KC_RSFT ,
+     KC_ESC    , DE_MAC_1 , DE_MAC_2    , DE_MAC_3      , DE_MAC_4      , DE_MAC_5      ,                     DE_MAC_6 , DE_MAC_7 , DE_MAC_8    , DE_MAC_9 , DE_MAC_0 , KC_BSPC ,
+     KC_TAB    , DE_MAC_K , DE_MAC_DOT  , DE_MAC_O      , DE_MAC_COMM   , DE_MAC_Y      ,                     DE_MAC_V , DE_MAC_G , DE_MAC_C    , DE_MAC_L , DE_MAC_SS, DE_MAC_Z     ,
+     MO(_3MAC) , DE_MAC_H , DE_MAC_A    , DE_MAC_E      , DE_MAC_I      , DE_MAC_U      ,                     DE_MAC_D , DE_MAC_T , DE_MAC_R    , DE_MAC_N , DE_MAC_S , DE_MAC_F    ,
+     KC_LSFT   , DE_MAC_X , DE_MAC_Q    , TD(TD_AE) , TD(TD_UE) , TD(TD_OE) ,                     DE_MAC_B , DE_MAC_P , DE_MAC_W    , DE_MAC_M , DE_MAC_J , KC_RSFT ,
 
-                                KC_LALT,  KC_SPC,   TD(TD_COPY_PASTE_CUT),    KC_ESC,  MO(_3MAC),  MO(_4),
+                                KC_LALT,  KC_SPC,   TD(TD_COPY_PASTE_CUT_MAC),    KC_ESC,  MO(_3MAC),  MO(_4),
                                           KC_LCTL,  KC_LGUI,                  KC_BSPC, KC_ENTER
   ),
 
@@ -88,7 +91,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TRNS , DE_MAC_BSLS ,  DE_MAC_SLSH  , DE_MAC_LCBR , DE_MAC_RCBR , DE_MAC_ASTR ,       DE_MAC_QUES , DE_MAC_LPRN , DE_MAC_RPRN , DE_MAC_MINS , DE_MAC_COLN , DE_MAC_AT  ,
      KC_LSFT , DE_MAC_HASH ,  DE_MAC_DLR   , DE_MAC_PIPE , DE_MAC_TILD , DE_MAC_GRV  ,       DE_MAC_PLUS , DE_MAC_PERC , DE_MAC_DQUO , DE_MAC_QUOT , DE_MAC_SCLN , KC_RSFT,
 
-                                KC_LALT,  KC_SPC,   TD(TD_COPY_PASTE_CUT),    KC_ESC,  KC_TRNS,  KC_TRNS,
+                                KC_LALT,  KC_SPC,   TD(TD_COPY_PASTE_CUT_MAC),    KC_ESC,  KC_TRNS,  KC_TRNS,
                                           KC_LCTL,  KC_LGUI,                  KC_BSPC, KC_ENTER
   ),
 
@@ -98,8 +101,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TRNS , KC_HOME , KC_LEFT , KC_DOWN , KC_RIGHT , KC_END,           KC_KP_ASTERISK , KC_4  , KC_5  , KC_6  , KC_KP_PLUS  , RGB_MODE_FORWARD,
      KC_LSFT , KC_ESC  , KC_TAB  , KC_INS  , KC_ENTER , DE_UNDO,          KC_0           , KC_1  , KC_2  , KC_3  , KC_KP_DOT   , KC_RSFT,
 
-                                KC_LALT,  KC_0,   TD(TD_COPY_PASTE_CUT),      RGB_HUI,  KC_TRNS,  KC_TRNS,
-                                          KC_LCTL,  KC_LGUI,                  RGB_SAI, RGB_VAI
+                                KC_LALT,  KC_0,   TD(TD_COPY_PASTE_CUT),    KC_ESC,  KC_TRNS,  KC_TRNS,
+                                          KC_LCTL,  KC_LGUI,                  KC_BSPC, KC_ENTER
   ),
 };
 
@@ -163,6 +166,44 @@ void copy_paste_cut_reset(tap_dance_state_t *state, void *user_data) {
             break;
         case TD_SINGLE_HOLD:
             unregister_mods(MOD_BIT(KC_LCTL));
+            unregister_code(KC_V);
+            break;
+        default: break;
+    }
+    xtap_state.state = TD_NONE;
+}
+
+void copy_paste_cut_finished_mac(tap_dance_state_t *state, void *user_data) {
+    xtap_state.state = cur_dance(state);
+    switch (xtap_state.state) {
+        case TD_SINGLE_TAP:
+            register_mods(MOD_BIT(KC_LEFT_GUI));
+            register_code(KC_C);
+            break;
+        case TD_DOUBLE_TAP:
+            register_mods(MOD_BIT(KC_LEFT_GUI));
+            register_code(KC_X);
+            break;
+        case TD_SINGLE_HOLD:
+            register_mods(MOD_BIT(KC_LEFT_GUI));
+            register_code(KC_V);
+            break;
+        default: break;
+    }
+}
+
+void copy_paste_cut_reset_mac(tap_dance_state_t *state, void *user_data) {
+    switch (xtap_state.state) {
+        case TD_SINGLE_TAP:
+            unregister_mods(MOD_BIT(KC_LEFT_GUI));
+            unregister_code(KC_C);
+            break;
+        case TD_DOUBLE_TAP:
+            unregister_mods(MOD_BIT(KC_LEFT_GUI));
+            unregister_code(KC_X);
+            break;
+        case TD_SINGLE_HOLD:
+            unregister_mods(MOD_BIT(KC_LEFT_GUI));
             unregister_code(KC_V);
             break;
         default: break;
@@ -258,10 +299,12 @@ void shift_umlaut_a_reset(tap_dance_state_t *state, void *user_data) {
 
 tap_dance_action_t tap_dance_actions[] = {
     [TD_COPY_PASTE_CUT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, copy_paste_cut_finished, copy_paste_cut_reset),
+    [TD_COPY_PASTE_CUT_MAC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, copy_paste_cut_finished_mac, copy_paste_cut_reset_mac),
     [TD_UE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, shift_umlaut_u_finished, shift_umlaut_u_reset),
     [TD_OE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, shift_umlaut_o_finished, shift_umlaut_o_reset),
     [TD_AE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, shift_umlaut_a_finished, shift_umlaut_a_reset),
 };
+
 
 bool process_detected_host_os_user(os_variant_t detected_os) {
     switch (detected_os) {

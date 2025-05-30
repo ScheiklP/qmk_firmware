@@ -28,7 +28,7 @@
 // clang-format off
 
 // Aliases
-#define DE_MAC_CIRC KC_GRV  // ^ (dead)
+#define DE_MAC_CIRC KC_NUBS  // ^ (dead)
 #define DE_MAC_1    KC_1    // 1
 #define DE_MAC_2    KC_2    // 2
 #define DE_MAC_3    KC_3    // 3
@@ -65,7 +65,7 @@
 #define DE_MAC_ODIA KC_SCLN // Ö
 #define DE_MAC_ADIA KC_QUOT // Ä
 #define DE_MAC_HASH KC_NUHS // #
-#define DE_MAC_LABK KC_NUBS // <
+#define DE_MAC_LABK KC_GRV // <
 #define DE_MAC_Y    KC_Z    // Y
 #define DE_MAC_X    KC_X    // X
 #define DE_MAC_C    KC_C    // C
